@@ -30,14 +30,14 @@ function validate(input: Validable) {
 function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     const adjDescriptor: PropertyDescriptor = {
-      configurable: true,
-      get() {
-        const boundFn = originalMethod.bind(this);
-        return boundFn;
-      }
+        configurable: true,
+        get() {
+            const boundFn = originalMethod.bind(this);
+            return boundFn;
+        }
     };
     return adjDescriptor;
-  }
+}
 class ProjectTemplate {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -91,17 +91,42 @@ class ProjectTemplate {
     }
     @Autobind
     private handleEvent(event: Event) {
-        event.preventDefault();    
+        event.preventDefault();
         const userInput = this.gatherUserInput();
         if (Array.isArray(userInput)) {
             const [title, desc, people] = userInput;
             console.log(title, desc, people);
             this.clearInputs();
-          }
+        }
     }
     private configure() {
         this.element.addEventListener('submit', this.handleEvent)
     }
 }
+class ProjectList {
+    templateElement: HTMLTemplateElement;
+    hostElement: HTMLDivElement;
+    element: HTMLElement;
+    constructor(private type: 'active' | 'finished') {
+        this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement;
+        this.hostElement = document.getElementById('app')! as HTMLDivElement;
+        const importedNode = document.importNode(this.templateElement.content, true);
+        this.element = importedNode.firstElementChild as HTMLElement;
+        this.element.id = `${this.type}-projects`;
+        this.attach();
+        this.renderContent();
+    }
+
+    private renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.element.querySelector('ul')!.id = listId;
+        this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS';
+    }
+    private attach() {
+        this.hostElement.insertAdjacentElement('beforeend', this.element);
+    }
+}
 
 const prjTemplate = new ProjectTemplate();
+const prjListActive = new ProjectList('active');
+const prjListFinished = new ProjectList('finished');
