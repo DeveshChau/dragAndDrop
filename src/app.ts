@@ -1,3 +1,15 @@
+// autobind decorator
+function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    const adjDescriptor: PropertyDescriptor = {
+        configurable: true,
+        get () {
+            const boundFn = originalMethod.bind(this);
+            return boundFn;
+        }
+    }
+    return adjDescriptor;
+}
 class ProjectTemplate {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -25,6 +37,7 @@ class ProjectTemplate {
         console.log(this.title.value);
         
     }
+    @Autobind
     private configure() {
         this.element.addEventListener('submit', this.handleEvent)
     }
