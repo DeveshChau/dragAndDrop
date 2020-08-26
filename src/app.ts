@@ -103,6 +103,27 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     abstract configure(): void;
     abstract renderContent(): void;
 }
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+    private project: Project;
+
+    constructor(hostId: string, project: Project) {
+        super('single-project', hostId, false, project.id);
+        this.project = project;
+
+        this.configure();
+        this.renderContent();
+    }
+
+    configure() { }
+
+    renderContent() {
+        this.element.querySelector('h2')!.textContent = this.project.title;
+        this.element.querySelector(
+            'h3'
+        )!.textContent = this.project.people.toString();
+        this.element.querySelector('p')!.textContent = this.project.description;
+    }
+}
 class ProjectTemplate extends Component<HTMLTemplateElement, HTMLDivElement> {
     title: HTMLInputElement;
     description: HTMLInputElement;
@@ -114,7 +135,7 @@ class ProjectTemplate extends Component<HTMLTemplateElement, HTMLDivElement> {
         this.people = this.element.querySelector('#people') as HTMLInputElement;
         this.configure();
     }
-    renderContent() {}
+    renderContent() { }
     configure() {
         this.element.addEventListener('submit', this.handleEvent)
     }
@@ -163,7 +184,7 @@ class ProjectList extends Component<HTMLTemplateElement, HTMLDivElement> {
     constructor(private type: 'active' | 'finished') {
         super('project-list', 'app', false, `${type}-projects`)
         this.assignedProjects = [];
-        this.configure();        
+        this.configure();
         this.renderContent();
     }
     configure() {
@@ -182,9 +203,7 @@ class ProjectList extends Component<HTMLTemplateElement, HTMLDivElement> {
         const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
         listEl.innerHTML = '';
         for (const prj of this.assignedProjects) {
-            const list = document.createElement('li');
-            list.textContent = prj.title;
-            listEl.appendChild(list);
+            new ProjectItem(this.element.querySelector('ul')!.id, prj);
         }
     }
     renderContent() {
