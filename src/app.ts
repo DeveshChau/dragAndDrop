@@ -1,5 +1,5 @@
-import { ProjectTemplate } from "./component/project-template.js";
-import { ProjectList } from "./component/project-list.js";
+import { ProjectTemplate } from "./component/project-template";
+import { ProjectList } from "./component/project-list";
 
 new ProjectTemplate();
 new ProjectList('active');
